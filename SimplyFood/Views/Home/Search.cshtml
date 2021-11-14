@@ -1,0 +1,30 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model IEnumerable<Recipe>
+
+<h2 style="color: black; text-align: center">Recipes that match "@ViewData["userInput"]"</h2>
+@if (Model == null)
+{
+    <p></p>
+    <p style="color: black; font-size: large; text-align: center">@ViewData["userInput"] not found. Please try again.</p>
+}
+else
+{
+
+<table class="table">
+    <tr>
+        <th style="font-size: medium">Title</th>
+        <th style="font-size: medium">Ready In Minutes</th>
+    </tr>
+
+    @foreach (var recipe in Model)
+    {
+        <tr height="100px">
+            <td style="font-size: medium">@Html.ActionLink(@recipe.Title, "ViewRecipe", new { id = @recipe.Id })</td>
+            <td style="font-size: medium">@recipe.ReadyInMinutes minutes</td>
+            <td><div><img style="width:300px;height:300px;" align="right" src="@recipe.ImageUrl"/></div></td>
+        </tr>
+    }
+</table>
+}

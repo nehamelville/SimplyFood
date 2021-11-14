@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+<head>
+    <style>
+        .recipeimage {
+            background-image: url("/images/background.jpg");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+            background-size: 100%;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body class="recipeimage">
+
+<div class="text-center">
+    <h1 class="display-4" style="color: white">Welcome to SimplyFood!</h1>
+    <br />
+    <div>
+        @using (Html.BeginForm("Search", "Home", FormMethod.Get))
+        {
+            <div class="bar">
+                <form id="click">
+                <input name="userInput"class="searchbar" type="search" title="Search" placeholder="Search Recipes...">
+                </form>
+            </div>
+        }
+    </div>
+</div>
+
+</body>
