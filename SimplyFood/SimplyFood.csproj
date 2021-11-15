@@ -10,6 +10,7 @@
     <None Remove="Newtonsoft.Json" />
     <None Remove="Microsoft.Extensions.Configuration" />
     <None Remove="MySql.Data" />
+    <None Remove="Views\Favorites\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.123" />
@@ -23,5 +24,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\images\" />
+    <Folder Include="Views\Favorite\" />
   </ItemGroup>
 </Project>

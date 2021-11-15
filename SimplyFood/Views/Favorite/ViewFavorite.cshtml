@@ -1,0 +1,44 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@model Recipe
+
+<h3 style="color:black; text-align: center">@Model.Title</h3>
+
+<div><img style="max-width: 100%;" class="center" src="@Model.ImageUrl" /></div>
+<table class="table" style="table-layout: fixed">
+    <tr>
+        <th style="font-size: medium">@Model.Title</th>
+    </tr>
+    <tr>
+        <th style="font-size: medium">Prep time: @Model.ReadyInMinutes</th>
+    </tr>
+    <tr>
+        <th style="font-size: medium">Ingredients</th>
+    </tr>
+    <tr>
+        <td >
+            <ul>
+                @foreach (var ingStr in Model.Ingredients.Split('\n'))
+                {
+                    <li>
+                        @ingStr
+                    </li>
+                }
+            </ul>
+        </td>
+        
+    </tr>
+
+    <tr>
+        <th style="font-size: medium">Instructions</th>
+    </tr>
+    <tr>
+        <td style="font-size: medium">@Model.Instructions</td>
+    </tr>
+
+</table>
+
+@{
+}

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
+using Dapper;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using SimplyFood.Models;
@@ -9,19 +12,25 @@ namespace SimplyFood
 {
     public class RecipeRepository:IRecipeRepository
     {
-        private readonly string apiKey;
+        //inject Configuration which includes appsettings.json 
+        private readonly IConfiguration _configuration;
+        private readonly string _apiKey;
+        private readonly IDbConnection _conn;
 
-        public RecipeRepository(String key)
+        public RecipeRepository(IConfiguration configuration, IDbConnection conn)
         {
-            apiKey = key;
+            _configuration = configuration;
+            //read api key from appsettings.json inside Configuration object
+            _apiKey = _configuration["myApiKey"];
+            _conn = conn;
         }
-
+      
         public IEnumerable<Recipe> GetRecipes(string userInput)
         {
             var client = new RestClient($"https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/search?query={ userInput }&offset=0&page=1&r=json");
             var request = new RestRequest(Method.GET);
             request.AddHeader("x-rapidapi-host", "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com");
-            request.AddHeader("x-rapidapi-key", apiKey);
+            request.AddHeader("x-rapidapi-key", _apiKey);
             IRestResponse response = client.Execute(request);
 
             var baseUri = JObject.Parse(response.Content).GetValue("baseUri");
@@ -37,7 +46,7 @@ namespace SimplyFood
             foreach (var rcp in recipes)
             {
                 var recipe = new Recipe();
-                recipe.Id = (int)rcp["id"];
+                recipe.RecipeId = (int)rcp["id"];
                 recipe.ImageUrl = baseUri.ToString() + "/" + (string)rcp["image"];
                 recipe.ReadyInMinutes = (int)rcp["readyInMinutes"];
                 recipe.Title = (string)rcp["title"];
@@ -53,18 +62,17 @@ namespace SimplyFood
             var client = new RestClient($"https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/{ id }/information");
             var request = new RestRequest(Method.GET);
             request.AddHeader("x-rapidapi-host", "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com");
-            request.AddHeader("x-rapidapi-key", apiKey);
+            request.AddHeader("x-rapidapi-key", _apiKey);
             IRestResponse response = client.Execute(request);
 
             string responseStr = response.Content;
             var recipe = JObject.Parse(responseStr);
             var ingredients = recipe.GetValue("extendedIngredients");
-            //var recipeInfo = new RecipeInfo();
             var recipeInfo = new Recipe();
             //var ingredientList = new List<Ingredient>();
             var ingStringBuilder = new StringBuilder();
 
-            recipeInfo.Id = (int)recipe["id"];
+            recipeInfo.RecipeId = (int)recipe["id"];
             recipeInfo.ImageUrl = (string)recipe["image"];
             recipeInfo.Title = (string)recipe["title"];
             recipeInfo.ReadyInMinutes = (int)recipe["readyInMinutes"];
@@ -74,18 +82,34 @@ namespace SimplyFood
             foreach (var ing in ingredients)
             {
                 ingStringBuilder.AppendLine((string)ing["originalString"]);
-                //var ingredient = new Ingredient();
-                //ingredient.Id = (int)ing["id"];
-                //ingredient.Aisle = (string)ing["aisle"];
-                //ingredient.Name = (string)ing["name"];
-                //ingredient.Unit = (string)ing["unit"];
-                //ingredient.Amount = (double)ing["amount"];
-                //ingredient.Image = (string)ing["image"]; 
-                
+              
             }
             recipeInfo.Ingredients = ingStringBuilder.ToString().Trim();
 
             return recipeInfo;
         }
+        public IEnumerable<Recipe> GetFavorites(string emailID)
+        {
+            return _conn.Query<Recipe>("Select * from favorites where userId=@emailID;", new {emailID= emailID });
+        }
+
+        public Recipe GetFavorite(int recipeID)
+        {
+            return _conn.QuerySingle<Recipe>("Select * from favorites where recipeId=@recipeID", new { recipeID = recipeID });
+
+        }
+        public void InsertFavoriteRecipe(Recipe recipeToInsert, string userId)
+        {
+            _conn.Execute("INSERT INTO favorites (recipeId,readyInMinutes,imageUrl,instructions,ingredients,userId,title) VALUES (@recipeId,@readyInMinutes,@imageUrl,@instructions,@ingredients,@userId,@title);",
+                new { recipeId = recipeToInsert.RecipeId, readyInminutes=recipeToInsert.ReadyInMinutes, imageUrl=recipeToInsert.ImageUrl, instructions=recipeToInsert.Instructions, ingredients=recipeToInsert.Ingredients, title=recipeToInsert.Title,userId= userId });
+        }
+
+        public void DeleteFavorite(Recipe favorite, string userId)
+        {
+            _conn.Execute("Delete from favorites where recipeId = @id AND userId = @userId;",
+                                       new { id = favorite.RecipeId, userId = userId });
+            
+        }
+
     }
 }

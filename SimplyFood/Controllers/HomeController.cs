@@ -12,19 +12,13 @@ namespace SimplyFood.Controllers
 {
     public class HomeController : Controller
     {
-        //inject Configuration which includes appsettings.json 
-        private readonly IConfiguration _configuration;
-        private readonly string _apiKey;
         private readonly ILogger<HomeController> _logger;
-        private readonly RecipeRepository recipeRepository;
+        private readonly IRecipeRepository _repo;
 
-        public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
+        public HomeController(ILogger<HomeController> logger, IRecipeRepository repo)
         {
-            _logger = logger;
-            _configuration = configuration;
-            //read api key from appsettings.json inside Configuration object
-            _apiKey = _configuration["myApiKey"];
-            recipeRepository = new RecipeRepository(_apiKey);
+            this._logger = logger;
+            this._repo = repo;
         }
 
         public IActionResult Index()
@@ -34,7 +28,7 @@ namespace SimplyFood.Controllers
 
         public IActionResult Search(string userInput)
         {
-            var recipes = recipeRepository.GetRecipes(userInput);
+            var recipes = _repo.GetRecipes(userInput);
             ViewData["userInput"] = userInput;
 
             return View(recipes);
@@ -43,7 +37,7 @@ namespace SimplyFood.Controllers
 
         public IActionResult ViewRecipe(string id)
         {
-            var recipeInfo = recipeRepository.GetRecipeInfo(id);
+            var recipeInfo = _repo.GetRecipeInfo(id);
 
             return View(recipeInfo);
         }

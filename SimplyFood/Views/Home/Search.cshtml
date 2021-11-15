@@ -21,7 +21,7 @@ else
     @foreach (var recipe in Model)
     {
         <tr height="100px">
-            <td style="font-size: medium">@Html.ActionLink(@recipe.Title, "ViewRecipe", new { id = @recipe.Id })</td>
+            <td style="font-size: medium">@Html.ActionLink(@recipe.Title, "ViewRecipe", new { id = @recipe.RecipeId })</td>
             <td style="font-size: medium">@recipe.ReadyInMinutes minutes</td>
             <td><div><img style="width:300px;height:300px;" align="right" src="@recipe.ImageUrl"/></div></td>
         </tr>
