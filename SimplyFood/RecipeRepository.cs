@@ -10,7 +10,7 @@ using SimplyFood.Models;
 
 namespace SimplyFood
 {
-    public class RecipeRepository:IRecipeRepository
+    public class RecipeRepository : IRecipeRepository
     {
         //inject Configuration which includes appsettings.json 
         private readonly IConfiguration _configuration;
@@ -24,7 +24,7 @@ namespace SimplyFood
             _apiKey = _configuration["myApiKey"];
             _conn = conn;
         }
-      
+
         public IEnumerable<Recipe> GetRecipes(string userInput)
         {
             var client = new RestClient($"https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/search?query={ userInput }&offset=0&page=1&r=json");
@@ -77,40 +77,47 @@ namespace SimplyFood
             recipeInfo.Title = (string)recipe["title"];
             recipeInfo.ReadyInMinutes = (int)recipe["readyInMinutes"];
             recipeInfo.Instructions = (string)recipe["instructions"];
-            
+
 
             foreach (var ing in ingredients)
             {
                 ingStringBuilder.AppendLine((string)ing["originalString"]);
-              
+
             }
             recipeInfo.Ingredients = ingStringBuilder.ToString().Trim();
 
             return recipeInfo;
         }
-        public IEnumerable<Recipe> GetFavorites(string emailID)
+        public IEnumerable<Recipe> GetFavorites(string userID)
         {
-            return _conn.Query<Recipe>("Select * from favorites where userId=@emailID;", new {emailID= emailID });
+            return _conn.Query<Recipe>("Select * from favorites where userId=@userID;", new { userId = userID });
         }
 
-        public Recipe GetFavorite(int recipeID)
+        public Recipe GetFavorite(int recipeID, string userID)
         {
-            return _conn.QuerySingle<Recipe>("Select * from favorites where recipeId=@recipeID", new { recipeID = recipeID });
+            return _conn.QuerySingle<Recipe>("Select * from favorites where recipeId=@recipeID AND userId=@userID", new { recipeID = recipeID, userId = userID });
 
         }
         public void InsertFavoriteRecipe(Recipe recipeToInsert, string userId)
         {
             _conn.Execute("INSERT INTO favorites (recipeId,readyInMinutes,imageUrl,instructions,ingredients,userId,title) VALUES (@recipeId,@readyInMinutes,@imageUrl,@instructions,@ingredients,@userId,@title);",
-                new { recipeId = recipeToInsert.RecipeId, readyInminutes=recipeToInsert.ReadyInMinutes,
-                    imageUrl=recipeToInsert.ImageUrl, instructions=recipeToInsert.Instructions,
-                    ingredients=recipeToInsert.Ingredients, userId= userId, title = recipeToInsert.Title});
+                new
+                {
+                    recipeId = recipeToInsert.RecipeId,
+                    readyInminutes = recipeToInsert.ReadyInMinutes,
+                    imageUrl = recipeToInsert.ImageUrl,
+                    instructions = recipeToInsert.Instructions,
+                    ingredients = recipeToInsert.Ingredients,
+                    userId = userId,
+                    title = recipeToInsert.Title
+                });
         }
 
         public void DeleteFavorite(int recipeId, string userId)
         {
             _conn.Execute("Delete from favorites where recipeId = @id AND userId = @userId;",
                                        new { id = recipeId, userId = userId });
-            
+
         }
 
     }

@@ -3,23 +3,26 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using SimplyFood.Areas.Identity.Data;
 using SimplyFood.Models;
 
 namespace SimplyFood.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly string currentUserId = "abc@test.com"; //TODO: dummy, remove after impl login
         private readonly ILogger<HomeController> _logger;
         private readonly IRecipeRepository _repo;
+        private UserManager<SimplyFoodUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, IRecipeRepository repo)
+        public HomeController(ILogger<HomeController> logger, IRecipeRepository repo, UserManager<SimplyFoodUser> userManager)
         {
             this._logger = logger;
             this._repo = repo;
+            this._userManager = userManager;
         }
 
         public IActionResult Index()
@@ -41,31 +44,33 @@ namespace SimplyFood.Controllers
             Recipe recipeInfo;
             try
             {
-                recipeInfo = _repo.GetFavorite(Int32.Parse(id));
-            }catch (Exception)
+                recipeInfo = _repo.GetFavorite(Int32.Parse(id), GetCurrentUser());
+            }
+            catch (Exception)
             {
                 recipeInfo = null;
             }
             if (recipeInfo != null)
             {
                 recipeInfo.IsFavorite = true;
-            } else
+            }
+            else
             {
                 recipeInfo = _repo.GetRecipeInfo(id);
             }
-                
+
             return View(recipeInfo);
         }
 
         public IActionResult InsertFavoriteToDatabase(Recipe recipeToInsert)
         {
-            _repo.InsertFavoriteRecipe(recipeToInsert, currentUserId);
+            _repo.InsertFavoriteRecipe(recipeToInsert, GetCurrentUser());
             recipeToInsert.IsFavorite = true;
             return RedirectToAction("ViewRecipe", new { id = recipeToInsert.RecipeId });
         }
         public IActionResult DeleteFavoriteFromDatabase(Recipe currentRecipe)
         {
-            _repo.DeleteFavorite(currentRecipe.RecipeId, currentUserId);
+            _repo.DeleteFavorite(currentRecipe.RecipeId, GetCurrentUser());
             currentRecipe.IsFavorite = false;
             return RedirectToAction("ViewRecipe", new { id = currentRecipe.RecipeId });
         }
@@ -93,6 +98,11 @@ namespace SimplyFood.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public string GetCurrentUser()
+        {
+            return _userManager.GetUserId(this.User);
         }
     }
 }
