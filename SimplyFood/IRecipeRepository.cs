@@ -11,7 +11,7 @@ namespace SimplyFood
         public IEnumerable<Recipe> GetFavorites(string emailID);
         public Recipe GetFavorite(int id);
         public void InsertFavoriteRecipe(Recipe recipeToInsert, string userid);
-        public void DeleteFavorite(Recipe favorite, string userid);
+        public void DeleteFavorite(int recipeId, string userid);
 
     }
 }

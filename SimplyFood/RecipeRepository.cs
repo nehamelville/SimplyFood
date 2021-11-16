@@ -101,13 +101,15 @@ namespace SimplyFood
         public void InsertFavoriteRecipe(Recipe recipeToInsert, string userId)
         {
             _conn.Execute("INSERT INTO favorites (recipeId,readyInMinutes,imageUrl,instructions,ingredients,userId,title) VALUES (@recipeId,@readyInMinutes,@imageUrl,@instructions,@ingredients,@userId,@title);",
-                new { recipeId = recipeToInsert.RecipeId, readyInminutes=recipeToInsert.ReadyInMinutes, imageUrl=recipeToInsert.ImageUrl, instructions=recipeToInsert.Instructions, ingredients=recipeToInsert.Ingredients, title=recipeToInsert.Title,userId= userId });
+                new { recipeId = recipeToInsert.RecipeId, readyInminutes=recipeToInsert.ReadyInMinutes,
+                    imageUrl=recipeToInsert.ImageUrl, instructions=recipeToInsert.Instructions,
+                    ingredients=recipeToInsert.Ingredients, userId= userId, title = recipeToInsert.Title});
         }
 
-        public void DeleteFavorite(Recipe favorite, string userId)
+        public void DeleteFavorite(int recipeId, string userId)
         {
             _conn.Execute("Delete from favorites where recipeId = @id AND userId = @userId;",
-                                       new { id = favorite.RecipeId, userId = userId });
+                                       new { id = recipeId, userId = userId });
             
         }
 

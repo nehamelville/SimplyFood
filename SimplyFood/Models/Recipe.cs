@@ -14,6 +14,7 @@ namespace SimplyFood.Models
         public string ImageUrl { get; set; }
         public string Instructions { get; set; }
         public string Ingredients { get; set; }
+        public Boolean IsFavorite { get; set; }
         //public IEnumerable<Ingredient> Ingredients { get; set; }
         
 

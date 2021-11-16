@@ -4,41 +4,77 @@
 
 @model Recipe
 
-<h3 style="color:black; text-align: center">@Model.Title</h3>
+@if (Model == null)
+{
+    <p style="color: black; font-size: large; text-align: center">No recipe found!</p>
+}
+else
+{
+    <h3 style="color:black; text-align: center">@Model.Title</h3>
 
-<div><img style="max-width: 100%;" class="center" src="@Model.ImageUrl" /></div>
-<table class="table" style="table-layout: fixed">
-    <tr>
-        <th style="font-size: medium">@Model.Title</th>
-    </tr>
-    <tr>
-        <th style="font-size: medium">Prep time: @Model.ReadyInMinutes</th>
-    </tr>
-    <tr>
-        <th style="font-size: medium">Ingredients</th>
-    </tr>
-    <tr>
-        <td >
-            <ul>
-                @foreach (var ingStr in Model.Ingredients.Split('\n'))
+    <div><img style="max-width: 100%;" class="center" src="@Model.ImageUrl" /></div>
+    <table class="table" style="table-layout: fixed">
+        <tr>
+            <th style="font-size: medium">@Model.Title</th>
+            <th>
+                @using (Html.BeginForm("ToggleFavorite", "Home", "Post"))
                 {
-                    <li>
-                        @ingStr
-                    </li>
+                    <input asp-for="RecipeId" type="hidden" value=@Model.RecipeId />
+                    <input asp-for="Title" type="hidden" value=@Model.Title />
+                    <input asp-for="ImageUrl" type="hidden" value=@Model.ImageUrl />
+                    <input asp-for="Ingredients" type="hidden" value=@Model.Ingredients />
+                    <input asp-for="Instructions" type="hidden" value=@Model.Instructions />
+                    <input asp-for="IsFavorite" type="hidden" value=@Model.IsFavorite />
+                    <input asp-for="ReadyInMinutes" type="hidden" value=@Model.ReadyInMinutes />
+
+                    @*<a class="nav-link text-dark" asp-area="" asp-route-id=@Model.RecipeId asp-controller="Favorite" asp-action="ToggleFavorite">*@
+
+                    @if (Model.IsFavorite)
+                    {
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-heart"></i> Remove Favorite
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-primary">
+                            <i class="far fa-heart"></i> Save Favorite
+                        </button>
+                    }
+                    @*</a>*@
                 }
-            </ul>
-        </td>
-        
-    </tr>
 
-    <tr>
-        <th style="font-size: medium">Instructions</th>
-    </tr>
-    <tr>
-        <td style="font-size: medium">@Model.Instructions</td>
-    </tr>
+            </th>
+        </tr>
+        <tr>
+            <th style="font-size: medium">Prep time: @Model.ReadyInMinutes</th>
+        </tr>
+        <tr>
+            <th style="font-size: medium">Ingredients</th>
+        </tr>
+        <tr>
+            <td>
+                <ul>
+                    @foreach (var ingStr in Model.Ingredients.Split('\n'))
+                    {
+                        <li>
+                            @ingStr
+                        </li>
+                    }
+                </ul>
+            </td>
 
-</table>
+        </tr>
 
+        <tr>
+            <th style="font-size: medium">Instructions</th>
+        </tr>
+        <tr>
+            <td style="font-size: medium">@Model.Instructions</td>
+        </tr>
+
+    </table>
+
+}
 @{
 }

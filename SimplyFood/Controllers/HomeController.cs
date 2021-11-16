@@ -12,6 +12,7 @@ namespace SimplyFood.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly string currentUserId = "abc@test.com"; //TODO: dummy, remove after impl login
         private readonly ILogger<HomeController> _logger;
         private readonly IRecipeRepository _repo;
 
@@ -37,9 +38,50 @@ namespace SimplyFood.Controllers
 
         public IActionResult ViewRecipe(string id)
         {
-            var recipeInfo = _repo.GetRecipeInfo(id);
-
+            Recipe recipeInfo;
+            try
+            {
+                recipeInfo = _repo.GetFavorite(Int32.Parse(id));
+            }catch (Exception)
+            {
+                recipeInfo = null;
+            }
+            if (recipeInfo != null)
+            {
+                recipeInfo.IsFavorite = true;
+            } else
+            {
+                recipeInfo = _repo.GetRecipeInfo(id);
+            }
+                
             return View(recipeInfo);
+        }
+
+        public IActionResult InsertFavoriteToDatabase(Recipe recipeToInsert)
+        {
+            _repo.InsertFavoriteRecipe(recipeToInsert, currentUserId);
+            recipeToInsert.IsFavorite = true;
+            return RedirectToAction("ViewRecipe", new { id = recipeToInsert.RecipeId });
+        }
+        public IActionResult DeleteFavoriteFromDatabase(Recipe currentRecipe)
+        {
+            _repo.DeleteFavorite(currentRecipe.RecipeId, currentUserId);
+            currentRecipe.IsFavorite = false;
+            return RedirectToAction("ViewRecipe", new { id = currentRecipe.RecipeId });
+        }
+
+        public IActionResult ToggleFavorite(Recipe currentRecipe)
+        {
+            //Remove Favorite
+            if (currentRecipe.IsFavorite)
+            {
+                return DeleteFavoriteFromDatabase(currentRecipe);
+            }
+            else //Save Favorite
+            {
+                return InsertFavoriteToDatabase(currentRecipe);
+            }
+
         }
 
         public IActionResult Privacy()

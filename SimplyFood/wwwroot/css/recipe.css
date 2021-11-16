@@ -29,3 +29,10 @@
     font-size: 16px;
     outline: none;
 }
+
+/* Style the input container */
+.input-container {
+    display: flex;
+    width: 100%;
+/*    margin-bottom: 15px;*/
+}
