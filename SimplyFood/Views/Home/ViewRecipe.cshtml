@@ -1,6 +1,11 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
+@using Microsoft.AspNetCore.Identity
+@using SimplyFood.Areas.Identity.Data
+
+@inject SignInManager<SimplyFoodUser> SignInManager
+@inject UserManager<SimplyFoodUser> UserManager
 
 @model Recipe
 
@@ -10,45 +15,40 @@
 }
 else
 {
-    <h3 style="color:black; text-align: center">@Model.Title</h3>
+    <h3 style="color:black; text-align: left">@Model.Title</h3>
+    <h6 style="color:black; text-align: left">@Model.ReadyInMinutes min prep</h6>
+    <div><img class="img-fluid" style="max-width: 100%;" src="@Model.ImageUrl" /></div>
+    <br />
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <div>
+            @using (Html.BeginForm("ToggleFavorite", "Home", "Post"))
+            {
+                <input asp-for="RecipeId" type="hidden" value=@Model.RecipeId />
+                <input asp-for="Title" type="hidden" value=@Model.Title />
+                <input asp-for="ImageUrl" type="hidden" value=@Model.ImageUrl />
+                <input asp-for="Ingredients" type="hidden" value=@Model.Ingredients />
+                <input asp-for="Instructions" type="hidden" value=@Model.Instructions />
+                <input asp-for="IsFavorite" type="hidden" value=@Model.IsFavorite />
+                <input asp-for="ReadyInMinutes" type="hidden" value=@Model.ReadyInMinutes />
 
-    <div><img style="max-width: 100%;" class="center" src="@Model.ImageUrl" /></div>
-    <table class="table" style="table-layout: fixed">
-        <tr>
-            <th style="font-size: medium">@Model.Title</th>
-            <th>
-                @using (Html.BeginForm("ToggleFavorite", "Home", "Post"))
+                @if (Model.IsFavorite)
                 {
-                    <input asp-for="RecipeId" type="hidden" value=@Model.RecipeId />
-                    <input asp-for="Title" type="hidden" value=@Model.Title />
-                    <input asp-for="ImageUrl" type="hidden" value=@Model.ImageUrl />
-                    <input asp-for="Ingredients" type="hidden" value=@Model.Ingredients />
-                    <input asp-for="Instructions" type="hidden" value=@Model.Instructions />
-                    <input asp-for="IsFavorite" type="hidden" value=@Model.IsFavorite />
-                    <input asp-for="ReadyInMinutes" type="hidden" value=@Model.ReadyInMinutes />
-
-                    @*<a class="nav-link text-dark" asp-area="" asp-route-id=@Model.RecipeId asp-controller="Favorite" asp-action="ToggleFavorite">*@
-
-                    @if (Model.IsFavorite)
-                    {
-                        <button type="submit" class="btn btn-success">
-                            <i class="fas fa-heart"></i> Remove Favorite
-                        </button>
-                    }
-                    else
-                    {
-                        <button type="submit" class="btn btn-primary">
-                            <i class="far fa-heart"></i> Save Favorite
-                        </button>
-                    }
-                    @*</a>*@
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-heart"></i> Remove Favorite
+                    </button>
                 }
-
-            </th>
-        </tr>
-        <tr>
-            <th style="font-size: medium">Prep time: @Model.ReadyInMinutes</th>
-        </tr>
+                else
+                {
+                    <button type="submit" class="btn btn-primary">
+                        <i class="far fa-heart"></i> Save Favorite
+                    </button>
+                }
+                @*</a>*@
+            }
+        </div>
+    }
+    <table class="table table-borderless table-responsive" style="table-layout:fixed">
         <tr>
             <th style="font-size: medium">Ingredients</th>
         </tr>

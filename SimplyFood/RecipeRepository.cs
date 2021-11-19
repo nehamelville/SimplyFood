@@ -50,7 +50,6 @@ namespace SimplyFood
                 recipe.ImageUrl = baseUri.ToString() + "/" + (string)rcp["image"];
                 recipe.ReadyInMinutes = (int)rcp["readyInMinutes"];
                 recipe.Title = (string)rcp["title"];
-                //recipe.ImageURLs = (IEnumerable<string>)rcp["imageUrls"];
                 recipeList.Add(recipe);
             }
 
@@ -69,7 +68,6 @@ namespace SimplyFood
             var recipe = JObject.Parse(responseStr);
             var ingredients = recipe.GetValue("extendedIngredients");
             var recipeInfo = new Recipe();
-            //var ingredientList = new List<Ingredient>();
             var ingStringBuilder = new StringBuilder();
 
             recipeInfo.RecipeId = (int)recipe["id"];

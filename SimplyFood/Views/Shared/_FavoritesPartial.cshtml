@@ -1,0 +1,13 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using SimplyFood.Areas.Identity.Data
+
+@inject SignInManager<SimplyFoodUser> SignInManager
+@inject UserManager<SimplyFoodUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <li class="nav-item">
+        <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Favorites"> Favorites</a>
+    </li>
+}
+

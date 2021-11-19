@@ -3,11 +3,11 @@
 *@
 @model IEnumerable<Recipe>
 
-<h2 style="color: black; text-align: center">Recipes that match "@ViewData["userInput"]"</h2>
-@if (Model == null)
+<h2 style="color: black; text-align: center">My Favorite Recipes</h2>
+@if (Model == null || Model.Count() == 0)
 {
     <p></p>
-    <p style="color: black; font-size: large; text-align: center">@ViewData["userInput"] not found. Please try again.</p>
+    <p style="color: black; font-size: large; text-align: center">You have no favorites!</p>
 }
 else
 {

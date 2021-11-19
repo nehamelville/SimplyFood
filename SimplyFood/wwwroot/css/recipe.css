@@ -5,6 +5,14 @@
     width: 50%;
 }
 
+.left {
+    display: block;
+    margin-left: 0;
+    margin-right: auto;
+    width: 50%;
+    height:50%;
+}
+
 .bar {
     margin: 0 auto;
     width: 575px;
@@ -35,4 +43,8 @@
     display: flex;
     width: 100%;
 /*    margin-bottom: 15px;*/
+}
+
+.top-buffer {
+    margin-top: 20px;
 }

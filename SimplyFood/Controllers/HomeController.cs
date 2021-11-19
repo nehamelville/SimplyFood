@@ -62,6 +62,33 @@ namespace SimplyFood.Controllers
             return View(recipeInfo);
         }
 
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+
+
+        #region Favorites
+
+        public IActionResult Favorites()
+        {
+            var favorites = _repo.GetFavorites(GetCurrentUser());
+            return View(favorites);
+        }
+
+        //public IActionResult ViewFavorite(int id)
+        //{
+        //    var favorite = _repo.GetFavorite(id, GetCurrentUser());
+        //    return View(favorite);
+        //}
+
         public IActionResult InsertFavoriteToDatabase(Recipe recipeToInsert)
         {
             _repo.InsertFavoriteRecipe(recipeToInsert, GetCurrentUser());
@@ -89,20 +116,12 @@ namespace SimplyFood.Controllers
 
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+        #endregion
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
 
         public string GetCurrentUser()
         {
-            return _userManager.GetUserId(this.User);
+            return _userManager.GetUserName(this.User);
         }
     }
 }
