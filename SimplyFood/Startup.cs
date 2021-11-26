@@ -32,10 +32,10 @@ namespace SimplyFood
                 return conn;
             });
 
-            services.AddTransient<IRecipeRepository, RecipeRepository>();
+            services.AddTransient<IRecipeRepository, RecipeRepository>();//inject repository to the controller
 
             services.AddControllersWithViews();
-            services.AddRazorPages();
+            services.AddRazorPages();//for identity
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,7 +57,7 @@ namespace SimplyFood
 
             app.UseRouting();
 
-            app.UseAuthentication();
+            app.UseAuthentication();//for identity got it from scaffolding guide
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

@@ -73,8 +73,6 @@ namespace SimplyFood.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-
-
         #region Favorites
 
         public IActionResult Favorites()
@@ -82,12 +80,6 @@ namespace SimplyFood.Controllers
             var favorites = _repo.GetFavorites(GetCurrentUser());
             return View(favorites);
         }
-
-        //public IActionResult ViewFavorite(int id)
-        //{
-        //    var favorite = _repo.GetFavorite(id, GetCurrentUser());
-        //    return View(favorite);
-        //}
 
         public IActionResult InsertFavoriteToDatabase(Recipe recipeToInsert)
         {
@@ -121,7 +113,7 @@ namespace SimplyFood.Controllers
 
         public string GetCurrentUser()
         {
-            return _userManager.GetUserName(this.User);
+            return _userManager.GetUserName(this.User);//current signed in user
         }
     }
 }
