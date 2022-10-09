@@ -15,7 +15,7 @@ I’ve used the following languages & technologies:
 - REST API(spoonacular Api)
 - JSON
 
-With this app, you can search for recipes using the Spoonacular API, view a list of matched recipes, view information of each recipe including photo, name, prep time, ingredients and instructions. If you register and login to SimplyFood, you can add any recipe to your Favorites collection. Favorites are unique to each user and you can browse all the details of your favorite recipes and also unfavorite them anytime. 
+With this app, you can search for recipes using the [Spoonacular API](https://rapidapi.com/spoonacular/api/recipe-food-nutrition/), view a list of matched recipes, view information of each recipe including photo, name, prep time, ingredients and instructions. If you register and login to SimplyFood, you can add any recipe to your Favorites collection. Favorites are unique to each user and you can browse all the details of your favorite recipes and also unfavorite them anytime. 
 
 <img width="1439" alt="Screen Shot 2021-11-26 at 10 47 56 AM" src="https://user-images.githubusercontent.com/90794087/194770829-46bc9134-f1c6-46c1-9356-ac8a60126eca.png">
 <img width="1439" alt="Screen Shot 2021-11-26 at 10 49 52 AM" src="https://user-images.githubusercontent.com/90794087/194770839-30c9f9e7-7fe0-4e5f-adb1-35845b1347dc.png">
